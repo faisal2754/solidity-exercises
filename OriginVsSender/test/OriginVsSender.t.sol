@@ -12,6 +12,7 @@ contract originVsSenderTest is Test {
     }
 
     function testSetNumber() external {
+        // why does tx.origin not equal msg.sender?
         originVsSender.setNumber(42);
         assertEq(originVsSender.number(), 42, "expected number to be 42");
     }

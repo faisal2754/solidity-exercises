@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.13;
 
+import "forge-std/console.sol";
+
 contract OriginVsSender {
     /**
      *
@@ -15,7 +17,15 @@ contract OriginVsSender {
 
     uint256 public number;
 
+    /// Not sure why failing, investigate test cases
     function setNumber(uint256 num) external {
-        /// your code here
+        console.log("origin is %s", tx.origin);
+        console.log("sender is %s", msg.sender);
+
+        if (msg.sender != tx.origin) {
+            revert();
+        }
+
+        number = num;
     }
 }

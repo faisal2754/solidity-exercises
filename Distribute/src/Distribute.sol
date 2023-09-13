@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.13;
 
+import "forge-std/console.sol";
+
 contract Distribute {
     /*
         This exercise assumes you know how to sending Ether.
@@ -12,6 +14,10 @@ contract Distribute {
     constructor() payable {}
 
     function distributeEther(address[] memory addresses) public {
-        // your code here
+        uint256 slice = address(this).balance / addresses.length;
+
+        for (uint256 i = 0; i < addresses.length; i++) {
+            payable(addresses[i]).transfer(slice);
+        }
     }
 }

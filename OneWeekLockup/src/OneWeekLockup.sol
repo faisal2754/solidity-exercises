@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.13;
 
+error InsufficientFunds();
+error TooSoon();
+
 contract OneWeekLockup {
     /**
      * In this exercise you are expected to create functions that let users deposit ether
@@ -13,15 +16,28 @@ contract OneWeekLockup {
      * - balanceOf(address )
      */
 
+    mapping(address => uint256) public userDeposit;
+    mapping(address => uint256) public recentDepositTime;
+
     function balanceOf(address user) public view returns (uint256) {
-        // return the user's balance in the contract
+        return userDeposit[user];
     }
 
     function depositEther() external payable {
-        /// add code here
+        userDeposit[msg.sender] += msg.value;
+        recentDepositTime[msg.sender] = block.timestamp;
     }
 
     function withdrawEther(uint256 amount) external {
-        /// add code here
+        if (amount > userDeposit[msg.sender]) {
+            revert InsufficientFunds();
+        }
+
+        if (recentDepositTime[msg.sender] + 1 weeks > block.timestamp) {
+            revert TooSoon();
+        }
+
+        payable(msg.sender).transfer(amount);
+        userDeposit[msg.sender] -= amount;
     }
 }

@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.13;
 
+import "forge-std/console.sol";
+
 contract IdiotBettingGame {
     /*
         This exercise assumes you know how block.timestamp works.
@@ -13,11 +15,31 @@ contract IdiotBettingGame {
            period has ended. It transfers the entire balance of the contract to the winner.
     */
 
+    uint256 highestDeposit;
+    address payable winner;
+    uint256 endTime;
+
+    constructor() {
+        endTime = block.timestamp;
+    }
+
     function bet() public payable {
-        // your code here
+        if (msg.value > highestDeposit) {
+            highestDeposit = msg.value;
+            winner = payable(msg.sender);
+            endTime = block.timestamp + 1 hours;
+        }
     }
 
     function claimPrize() public {
-        // your code here
+        if (msg.sender != winner) {
+            revert("not the winner");
+        }
+
+        if (endTime > block.timestamp) {
+            revert("betting time not over yet");
+        }
+
+        winner.transfer(address(this).balance);
     }
 }
